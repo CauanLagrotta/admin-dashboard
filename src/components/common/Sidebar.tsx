@@ -12,6 +12,7 @@ import {
 import { ForwardRefExoticComponent, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useIsMobile } from "../../hooks/UseIsMobile";
 
 interface SidebarItem {
   name: string;
@@ -66,14 +67,20 @@ const SIDEBAR_ITEMS = [
 ] as SidebarItem[];
 
 export const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
+
+  const sidebarWidth = isMobile
+    ? isSidebarOpen
+      ? "w-screen"
+      : "w-20"
+    : isSidebarOpen
+    ? "w-64"
+    : "w-20";
 
   return (
     <motion.div
-      className={`relative z-10 transition-all duration-300 ease-in-out flex-shrink-0 ${
-        isSidebarOpen ? "w-64" : "w-20"
-      }`}
-      animate={{ width: isSidebarOpen ? 256 : 80 }}
+      className={`relative z-20 transition-all duration-300 ease-in-out flex-shrink-0 ${sidebarWidth} overflow-hidden`}
     >
       <div className="h-full bg-gray-800 bg-opacity-50 backdrop-blur-md p-4 flex flex-col border-r border-gray-700">
         <motion.button
@@ -93,7 +100,6 @@ export const Sidebar = () => {
                   size={20}
                   style={{ color: item.color, minWidth: "20px" }}
                 />
-
                 <AnimatePresence>
                   {isSidebarOpen && (
                     <motion.span
@@ -101,7 +107,7 @@ export const Sidebar = () => {
                       initial={{ opacity: 0, width: 0 }}
                       animate={{ opacity: 1, width: "auto" }}
                       exit={{ opacity: 0, width: 0 }}
-                      transition={{ duration: 0.2, delay: 0.3 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
                     >
                       {item.name}
                     </motion.span>
